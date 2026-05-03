@@ -16,12 +16,14 @@ class UserSeeder extends Seeder
     {
         $user = User::updateOrCreate(
             ['email' => 'sa@gmail.com'],
-            ['name' => 'Super Admin'],
-            ['password' => bcrypt('12345678')]
+            [
+                'name' => 'Super Admin',
+                'password' => bcrypt('12345678')
+            ]
         );
 
-        $superAdminRole = Role::where('name', 'Super Admin')->first();
+        $superAdminRole = Role::where('nombre', 'super_admin')->first();
 
-        $user -> roles() ->syncWithoutDetaching($superAdminRole);
+        $user -> roles()->syncWithoutDetaching($superAdminRole);
     }
 }

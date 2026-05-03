@@ -8,14 +8,14 @@ class Role extends Model
 {
     protected $fillable = ['nombre']; //protección masiva para inyección de datos
 
-    public function user()
+    public function permissions()
     {
-        return $this->belongsToMany(User::class);
+        return $this->belongsToMany(Permission::class, 'permission_role');
         
     } 
 
-    public function permission()
+    public function users()
     {
-        return $this->hasMany(Permission::class);
+        return $this->belongsToMany(User::class, 'role_user');
     }
 }
