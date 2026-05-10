@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Category;
 use Illuminate\Http\Request;
+use Inertia\Inertia;
 
 class CategoryController extends Controller
 {
@@ -12,7 +13,13 @@ class CategoryController extends Controller
      */
     public function index()
     {
-        //
+        $categories = Category::withCount('products')
+            ->orderBy('nombre')
+            ->paginate(10);
+
+        return Inertia::render('categories/index', [
+            'categories' => $categories,
+        ]);
     }
 
     /**
@@ -20,7 +27,7 @@ class CategoryController extends Controller
      */
     public function create()
     {
-        //
+        return Inertia::render('categories/create');
     }
 
     /**
@@ -28,7 +35,18 @@ class CategoryController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:100|unique:categories,nombre',
+        ], [
+            'nombre.required' => 'El nombre de la categoría es obligatorio.',
+            'nombre.unique'   => 'Ya existe una categoría con ese nombre.',
+            'nombre.max'      => 'El nombre no puede exceder 100 caracteres.',
+        ]);
+
+        Category::create($validated);
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Categoría creada correctamente.');
     }
 
     /**
@@ -36,7 +54,11 @@ class CategoryController extends Controller
      */
     public function show(Category $category)
     {
-        //
+        $category->load('products');
+
+        return Inertia::render('categories/show', [
+            'category' => $category,
+        ]);
     }
 
     /**
@@ -44,7 +66,9 @@ class CategoryController extends Controller
      */
     public function edit(Category $category)
     {
-        //
+        return Inertia::render('categories/edit', [
+            'category' => $category,
+        ]);
     }
 
     /**
@@ -52,7 +76,18 @@ class CategoryController extends Controller
      */
     public function update(Request $request, Category $category)
     {
-        //
+        $validated = $request->validate([
+            'nombre' => 'required|string|max:100|unique:categories,nombre,' . $category->id,
+        ], [
+            'nombre.required' => 'El nombre de la categoría es obligatorio.',
+            'nombre.unique'   => 'Ya existe una categoría con ese nombre.',
+            'nombre.max'      => 'El nombre no puede exceder 100 caracteres.',
+        ]);
+
+        $category->update($validated);
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Categoría actualizada correctamente.');
     }
 
     /**
@@ -60,6 +95,9 @@ class CategoryController extends Controller
      */
     public function destroy(Category $category)
     {
-        //
+        $category->delete();
+
+        return redirect()->route('categories.index')
+            ->with('success', 'Categoría eliminada correctamente.');
     }
 }
