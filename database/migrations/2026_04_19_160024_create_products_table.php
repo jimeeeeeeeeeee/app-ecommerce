@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('nombre');
             $table->text('descripcion')->nullable();
-            $table->decimal('precio_men', 8, 2);
-            $table->decimal('precio_may', 8, 2)->nullable();
+            $table->decimal('precio', 8, 2);
             $table->foreignId('category_id')->constrained()->onDelete('cascade');
             $table->enum('status', ['activo', 'inactivo'])->default('activo');
             $table->timestamps();
