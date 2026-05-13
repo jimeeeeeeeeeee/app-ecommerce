@@ -25,5 +25,7 @@ class UserSeeder extends Seeder
         $superAdminRole = Role::where('nombre', 'super_admin')->first();
 
         $user -> roles()->syncWithoutDetaching($superAdminRole);
+
+        User::factory(10)->create();
     }
 }
